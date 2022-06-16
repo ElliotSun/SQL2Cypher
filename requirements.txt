@@ -1,0 +1,15 @@
+interchange==2021.0.4
+mo-dots==4.22.21108
+mo-future==3.147.20327
+mo-imports==3.149.20327
+mo-kwargs==4.22.21108
+mo-logs==4.23.21108
+monotonic==1.6
+mo-sql-parsing
+numpy
+pandas
+pansi==2020.7.3
+py2neo==2021.2.3
+pytz==2022.1
+sqlparse==0.4.2
+urllib3==1.26.9

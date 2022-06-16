@@ -18,6 +18,32 @@ class Where(AbsSQL):
             elif str(key).lower() == 'in':
                 # handle in case
                 self.cypher += self.handle_in_case(data[key])
+            else:
+                self.cypher += self.generate_condition(key, data[key])
+
+    def generate_condition(self, key, value):
+        ope = self.op.get_operator(key)
+        # value is a list type
+        values = []
+        find_literal = False
+        for v in value:
+            if type(v) != dict:
+                values.append(v)
+            else:
+                if 'literal' in v.keys():
+                    values.append(v['literal'])
+                    find_literal = True
+                elif 'sum' in v.keys():
+                    values.append('sum({})'.format(v['sum']))
+                elif 'avg' in v.keys():
+                    values.append('avg({})'.format(v['avg']))
+                elif 'count' in v.keys():
+                    values.append('count({})'.format(v['count']))
+        if not find_literal:
+            find_literal = all(isinstance(item, str) for item in values)
+        result = self.get_clause_pattern(" {} {} {} ").format(values[0], ope, values[1]) if not find_literal \
+            else self.get_clause_pattern(" {} {} '{}' ").format(values[0], ope, values[1])
+        return result
 
     def handle_and_or_case(self, data, keyword="AND"):
         """
@@ -34,18 +60,7 @@ class Where(AbsSQL):
                 result += keyword
             for key, value in case.items():
                 # get the operation first
-                ope = self.op.get_operator(key)
-                # value is a list type
-                values = []
-                find_literal = False
-                for v in value:
-                    if type(v) != dict:
-                        values.append(v)
-                    else:
-                        values.append(v['literal'])
-                        find_literal = True
-                result += " {} {} {} ".format(values[0], ope, values[1]) if not find_literal \
-                    else " {} {} '{}' ".format(values[0], ope, values[1])
+                result += self.generate_condition(key, value)
         return result
 
     def handle_in_case(self, data):

@@ -1,9 +1,9 @@
 import os
 import sys
 from utils.Logger import Logger
-from moz_sql_parser import parse
+from mo_sql_parsing import parse
 from utils.SQLParser import SQLParser
-from utils.ConvertDB import ConvertDB
+#from utils.ConvertDB import ConvertDB
 from configparser import ConfigParser, ParsingError, NoSectionError
 
 
@@ -82,6 +82,12 @@ class CLI:
             sql_parser.generate_cypher(parse(sql), sql)
             print(sql_parser.get_cypher())
 
+    @staticmethod
+    def convert_sql(sql_query):
+        sql_parser = SQLParser()
+        sql_parser.generate_cypher(parse(sql_query), sql_query)
+        return sql_parser.get_cypher()
+
     def convert_sql_with_str(self, sql_query):
         """
         transfer the sql to cypher with a string sql
@@ -99,18 +105,19 @@ class CLI:
         self.config = self._load_config()
         self.cb = self._load_convert(self.db_name)
 
-    def convert_db(self):
-        """
-        convert the whole database in mysql
-                db = "employees"
-                user = "lsy"
-                password = "li1998"
-                cypher_user = "neo4j"
-                cypher_password = "li1998"
-        :return:
-        """
-        # print(cb.execute_sql("show tables", ()))
-        # cb.read_relations()
-        self.config = self._load_config()
-        self.cb = self._load_convert(self.db_name)
-        self.cb.exporting()
+
+    # def convert_db(self):
+    #     """
+    #     convert the whole database in mysql
+    #             db = "employees"
+    #             user = "lsy"
+    #             password = "li1998"
+    #             cypher_user = "neo4j"
+    #             cypher_password = "li1998"
+    #     :return:
+    #     """
+    #     # print(cb.execute_sql("show tables", ()))
+    #     # cb.read_relations()
+    #     self.config = self._load_config()
+    #     self.cb = self._load_convert(self.db_name)
+    #     self.cb.exporting()
